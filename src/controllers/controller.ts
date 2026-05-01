@@ -1,6 +1,7 @@
 import express from "express";
 import userModels from "../models/user.models";
-
+import isEmail from "validator/lib/isEmail";
+import new_purchaseModel from "../models/new_purchase.model";
 
 export const SignUp = async (req: express.Request, res: express.Response)=>{
     try{
@@ -40,6 +41,60 @@ export const Login = async(req: express.Request, res: express.Response)=>{
         }
 
         res.status(200).json({message: "Login successful", user})
+
+    }catch(err){
+        res.status(500).json({message: "Internal Server Error"})
+    }
+}
+
+export const newPurchaseEntry = async(req: express.Request, res: express.Response)=>{
+    try{
+
+        const {firstName, lastName, email, phoneNumber, itemName, purchaseDate, serialNumber, price, quantity , paidAmount} = req.body;
+
+        const existingSerialNumber = await new_purchaseModel.findOne({serialNumber})
+
+            if(!firstName || !lastName || !email || !phoneNumber || !itemName || !purchaseDate || !serialNumber || !price || !quantity || !paidAmount){
+                return res.status(400).json({message: "All fields are required"})
+            }else if(isEmail(email) === false){
+                return res.status(400).json({message: "Invalid email address"})
+            } else if(existingSerialNumber){
+                return res.status(400).json({message: "Serial number already exists"})
+
+            } else{
+
+                const newPurchase = new new_purchaseModel({
+                    firstName,
+                    lastName,
+                    email,
+                    phoneNumber,
+                    itemName,
+                    purchaseDate,
+                    serialNumber,
+                    price,
+                    quantity, 
+                    paidAmount,
+                })
+                
+
+                await newPurchase.save();
+                
+                res.status(201).json({message: "New purchase entry created successfully", newPurchase})
+            }
+
+
+    }catch(err){
+        console.log(err , )
+        res.status(500).json({message: "Internal Server Errorssss"})
+    }
+}
+
+export const getAllNewPurchaseItems = async(req: express.Request, res: express.Response)=>{
+    try{
+
+        const getAllNewPurchaseItems = await new_purchaseModel.find();
+
+        res.status(200).json({message: "All purchase items retrieved successfully", getAllNewPurchaseItems})
 
     }catch(err){
         res.status(500).json({message: "Internal Server Error"})
