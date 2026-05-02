@@ -1,7 +1,8 @@
 import express from "express";
 import userModels from "../models/user.models";
 import isEmail from "validator/lib/isEmail";
-import new_purchaseModel from "../models/new_purchase.model";
+import new_purchaseModel from "../models/newPurchase.model";
+import repairingModel from "../models/repairing.model";
 
 export const SignUp = async (req: express.Request, res: express.Response)=>{
     try{
@@ -99,4 +100,48 @@ export const getAllNewPurchaseItems = async(req: express.Request, res: express.R
     }catch(err){
         res.status(500).json({message: "Internal Server Error"})
     }
+}
+
+export const repairingItemEntry = async(req: express.Request, res: express.Response)=>{
+
+    try{
+        const {customerName, mobileNumber, itemName, issueDescription, repairStatus, repairCost, paymentStatus, receivedAt, completedAt} = req.body
+
+        if(!customerName || !mobileNumber || !itemName || !issueDescription || !repairStatus || !paymentStatus || !receivedAt || !completedAt || !repairCost){
+            return res.status(400).json({message: "All fields are required"})
+        }else{
+
+            const newRepairingEntry = new repairingModel({
+                customerName,
+                mobileNumber,
+                itemName,
+                issueDescription,       
+                repairStatus,
+                repairCost,
+                paymentStatus,
+                receivedAt,
+                completedAt
+            })
+            await newRepairingEntry.save();
+            res.status(201).json({message: "New repairing entry created successfully", newRepairingEntry})
+        }
+
+
+    }catch(err){
+        res.status(500).json({message: "Internal Server Error"})
+    }
+
+
+}
+
+export const getAllRepairingItems = async(req: express.Request, res: express.Response)=>{
+
+    try{
+        const getAllRepairingItems = await repairingModel.find();
+
+        res.status(200).json({message: "All repairing items retrieved successfully", getAllRepairingItems})
+    }catch(err){
+        res.status(500).json({message: "Internal Server Error"})
+    }
+
 }
