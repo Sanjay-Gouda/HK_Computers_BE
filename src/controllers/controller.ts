@@ -4,6 +4,10 @@ import isEmail from "validator/lib/isEmail";
 import new_purchaseModel from "../models/newPurchase.model";
 import repairingModel from "../models/repairing.model";
 
+export const CheckSiteHealth = (req: express.Request, res: express.Response)=>{
+    res.status(200).json({message: "Site is healthy"})
+}
+
 export const SignUp = async (req: express.Request, res: express.Response)=>{
     try{
         const {userName, password} = req.body;
@@ -79,8 +83,15 @@ export const newPurchaseEntry = async(req: express.Request, res: express.Respons
                 
 
                 await newPurchase.save();
+
+                const responseData = {
+                    status: "SUCCESS",
+                    message: "New purchase entry created successfully",
+                    data: newPurchase,
+                    meta:{}
+                }
                 
-                res.status(201).json({message: "New purchase entry created successfully", newPurchase})
+                res.status(201).json(responseData)
             }
 
 
@@ -90,13 +101,71 @@ export const newPurchaseEntry = async(req: express.Request, res: express.Respons
     }
 }
 
+
+
 export const getAllNewPurchaseItems = async(req: express.Request, res: express.Response)=>{
     try{
 
         const getAllNewPurchaseItems = await new_purchaseModel.find();
 
-        res.status(200).json({message: "All purchase items retrieved successfully", getAllNewPurchaseItems})
+        const responseData = {
+            status: "SUCCESS",
+            message: "All purchase items retrieved successfully",
+            data: getAllNewPurchaseItems,
+            meta:{}
+        }
 
+        res.status(200).json(responseData)
+
+    }catch(err){
+        res.status(500).json({message: "Internal Server Error"})
+    }
+}
+
+export const updatePurchaseEntry = async(req: express.Request, res: express.Response)=>{
+
+    try{
+        const {id} = req.params;
+        const updatedData = req.body;
+
+        const updatedEntry = await new_purchaseModel.findByIdAndUpdate(id,updatedData,{
+            returnDocument: "after",
+      runValidators: true,
+        })
+
+        const responseData = {
+            status:'SUCCESS',
+            message: "Purchase entry updated successfully",
+            data: updatedEntry,
+            meta:{}
+        }
+
+        res.status(200).json(responseData)
+
+    }catch(err){
+        res.status(500).json({message: err})
+    }
+}
+
+export const findPurchaseEntryById = async(req: express.Request, res: express.Response)=>{
+
+    try{
+        const {id} = req.params;
+
+        const purchaseEntry = await new_purchaseModel.findById(id)
+
+        if(!purchaseEntry){
+            return res.status(404).json({message: "Purchase entry not found"})
+        }
+
+        const responseData = {
+            status: "SUCCESS",
+            message: "Purchase entry retrieved successfully",
+            data: purchaseEntry,
+            meta:{}
+        }
+
+        res.status(200).json(responseData)
     }catch(err){
         res.status(500).json({message: "Internal Server Error"})
     }
