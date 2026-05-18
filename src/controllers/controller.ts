@@ -3,6 +3,7 @@ import userModels from "../models/user.models";
 import isEmail from "validator/lib/isEmail";
 import new_purchaseModel from "../models/newPurchase.model";
 import repairingModel from "../models/repairing.model";
+import jwt from "jsonwebtoken";
 
 export const CheckSiteHealth = (req: express.Request, res: express.Response)=>{
     res.status(200).json({message: "Site is healthy"})
@@ -39,14 +40,41 @@ export const Login = async(req: express.Request, res: express.Response)=>{
       const {userName} = req.body;
         
         const user = await userModels.findOne({userName})
-        console.log(user)
+        
 
         if(!user){
             return res.status(404).json({message: "User not found"})
         }
+        
+        if(user.password === req.body.password){
 
-        res.status(200).json({message: "Login successful", user})
+            /* CREATE A JWT TOKEN */
+            const token = jwt.sign({userId: user._id}, 'kahsdaksdjhaksdhj')
 
+            /* STORE IN A COOKIE     */
+            res.cookie('token', token) 
+            res.status(200).json({message: "Login successful", user})
+
+        }
+
+
+    }catch(err){
+        res.status(500).json({message: "Internal Server Error"})
+    }
+}
+
+export const Logout = async(req: express.Request, res: express.Response)=>{
+    try{
+        res.clearCookie('token');
+
+        const responseData={
+            status: "SUCCESS",
+            message: "Logout successful",
+            data: null,
+            meta:{}
+        }
+
+        res.status(200).json(responseData)
     }catch(err){
         res.status(500).json({message: "Internal Server Error"})
     }
@@ -105,9 +133,8 @@ export const newPurchaseEntry = async(req: express.Request, res: express.Respons
 
 export const getAllNewPurchaseItems = async(req: express.Request, res: express.Response)=>{
     try{
-
+       
         const getAllNewPurchaseItems = await new_purchaseModel.find();
-
         const responseData = {
             status: "SUCCESS",
             message: "All purchase items retrieved successfully",
@@ -118,7 +145,7 @@ export const getAllNewPurchaseItems = async(req: express.Request, res: express.R
         res.status(200).json(responseData)
 
     }catch(err){
-        res.status(500).json({message: "Internal Server Error"})
+        res.status(500).json({message: err})
     }
 }
 
