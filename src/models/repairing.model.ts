@@ -32,7 +32,7 @@ const repairingSchema = new mongoose.Schema({
     },
     paymentStatus:{
         type:String,
-        enum:["unpaid","paid"],
+        enum:["unpaid","paid", "partiallypaid"],
         default:"unpaid"
     },
     receivedAt:{
