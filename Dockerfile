@@ -1,18 +1,22 @@
 FROM node:lts
-# Set the working directory
+
+# Set working directory
 WORKDIR /app
 
-# COPY package.json .
-# COPY yarn.lock .
-COPY . .
+# Copy package files first
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
-RUN echo "file copying completed..."
 
-EXPOSE 8001
+# Copy remaining files
+COPY . .
 
-
+# Build app
 RUN npm run build
 
-RUN echo "build completed..."
+# Expose port
+EXPOSE 8001
 
-CMD ["npm","run","start"]
+# Start production server
+CMD ["npm", "start"]
