@@ -1,8 +1,5 @@
 FROM node:lts
 
-# Set working directory
-WORKDIR /app
-
 # Copy package files first
 COPY package*.json ./
 
