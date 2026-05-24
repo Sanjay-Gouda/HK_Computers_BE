@@ -4,10 +4,6 @@ import userModels from "../models/user.models";
 import jwt from "jsonwebtoken";
 
 
-
-
-
-
 export const CheckSiteHealth = (req: express.Request, res: express.Response)=>{
     res.status(200).json({message: "Site is healthy"})
 }

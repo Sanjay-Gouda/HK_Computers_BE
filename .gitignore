@@ -39,3 +39,6 @@ coverage/
 
 # TypeScript
 *.tsbuildinfo
+
+package-lock.json
+yarn.lock
