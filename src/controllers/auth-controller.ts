@@ -46,7 +46,7 @@ export const Login = async(req: express.Request, res: express.Response)=>{
         }
 
         if(user.password !== req.body.password){
-            return res.status(401).json({ status: "FAILED", message: "Invalid password"})
+            return res.status(200).json({ status: "FAILED", message: "Invalid password"})
         }
         
         if(user.password === req.body.password){
