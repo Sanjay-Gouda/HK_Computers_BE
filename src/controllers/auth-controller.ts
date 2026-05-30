@@ -42,11 +42,11 @@ export const Login = async(req: express.Request, res: express.Response)=>{
         
 
         if(!user){
-            return res.status(404).json({message: "User not found"})
+            return res.status(404).json({ status: "FAILED", message: "User not found"})
         }
 
         if(user.password !== req.body.password){
-            return res.status(401).json({message: "Invalid password"})
+            return res.status(401).json({ status: "FAILED", message: "Invalid password"})
         }
         
         if(user.password === req.body.password){
@@ -56,7 +56,13 @@ export const Login = async(req: express.Request, res: express.Response)=>{
 
             /* STORE IN A COOKIE     */
             res.cookie('token', token) 
-            res.status(200).json({message: "Login successful", user})
+
+            const responseData={
+                status: "SUCCESS",
+                message: "Login successful"
+            }
+
+            res.status(200).json(responseData)
 
         }
 
