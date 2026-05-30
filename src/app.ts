@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(cors(
     {
-        origin: "http://localhost:3000", // Replace with your frontend URL
+        origin: ["http://localhost:3000", "https://hk-computers-fe.vercel.app/"], // Replace with your frontend URL
         credentials: true, // Allow cookies to be sent with requests
     }
 )); // Middleware to enable CORS
