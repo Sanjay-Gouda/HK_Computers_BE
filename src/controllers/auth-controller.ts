@@ -55,7 +55,12 @@ export const Login = async(req: express.Request, res: express.Response)=>{
             const token = jwt.sign({userId: user._id}, 'kahsdaksdjhaksdhj')
 
             /* STORE IN A COOKIE     */
-            res.cookie('token', token) 
+            res.cookie('token', token,{
+                httpOnly: true,
+                secure:true,
+                sameSite: 'none',
+                maxAge: 24 * 60 * 60 * 1000 // 1 day
+            }) 
 
             const responseData={
                 status: "SUCCESS",
