@@ -64,7 +64,8 @@ export const Login = async(req: express.Request, res: express.Response)=>{
 
             const responseData={
                 status: "SUCCESS",
-                message: "Login successful"
+                message: "Login successful",
+                token: token,
             }
 
             res.status(200).json(responseData)
